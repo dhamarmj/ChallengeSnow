@@ -1,0 +1,111 @@
+﻿@page
+@model ChallengeSnow.Pages.Items.IndexModel
+@{
+}
+<br />
+
+<div>
+    <div class="col-9">
+        <h2 class="text-info"> Items List</h2>
+    </div>
+
+    <div class="col-12 border p-3 mt-3">
+        @if (Model.Items.Count() > 0)
+        {
+            <table class="table table-striped border">
+                <tr class="table-secondary">
+                    <th>
+                        <label asp-for="Items.FirstOrDefault().Id"></label>
+                    </th>
+                    <th>
+                        <label asp-for="Items.FirstOrDefault().Available_Quantity"></label>
+                    </th>
+                    <th>
+                        <label asp-for="Items.FirstOrDefault().Price"></label>
+                    </th>
+                </tr>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(m => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.Available_Quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.Price)
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <p>No Items available </p>
+        }
+    </div>
+
+    <br />
+    <br />
+    <br />
+
+    <div class="col-9">
+        <h2 class="text-info"> Deal Items List</h2>
+    </div>
+    <div class="col-12 border p-3 mt-3">
+        @if (Model.Deal_Items.Count() > 0)
+        {
+            <table class="table table-striped border">
+                <tr class="table-secondary">
+                    <th>
+                        <label asp-for="Deal_Items.FirstOrDefault().Id"></label>
+                    </th>
+                    <th>
+                        <label asp-for="Deal_Items.FirstOrDefault().Available_Quantity"></label>
+                    </th>
+                    <th>
+                        <label asp-for="Deal_Items.FirstOrDefault().Price"></label>
+                    </th>
+                    <th>
+                        <label asp-for="Deal_Items.FirstOrDefault().Discount"></label>
+                    </th>
+                    <th>
+                        <label asp-for="Deal_Items.FirstOrDefault().Start_Date"></label>
+                    </th>
+                    <th>
+                        <label asp-for="Deal_Items.FirstOrDefault().End_Date"></label>
+                    </th>
+                </tr>
+                @foreach (var item in Model.Deal_Items)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(m => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.Available_Quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.Price)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.Discount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.Start_Date)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(m => item.End_Date)
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <p>No Deal Items available </p>
+        }
+    </div>
+
+</div>

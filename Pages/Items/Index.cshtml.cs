@@ -2,22 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ChallengeSnow.Interfaces;
 using ChallengeSnow.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace ChallengeSnow.Pages.Orders
+namespace ChallengeSnow.Pages.Items
 {
     public class IndexModel : BaseRazorPage
     {
-        public IEnumerable<Order> Orders { get; set; }
-
+        public IEnumerable<Item> Items { get; set; }
+        public IEnumerable<Deal_Item> Deal_Items { get; set; }
 
         public void OnGet()
         {
-            Console.WriteLine(OrderManager.PrintOrders());
-            Orders = OrderManager.GetOrders().Value;
+            Items = OrderManager.GetItems().Value;
+            Deal_Items = OrderManager.GetDeal_Items().Value;
         }
     }
 }

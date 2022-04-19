@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ChallengeSnow.Models.Core;
 
 namespace ChallengeSnow.Models
 {
@@ -12,39 +13,145 @@ namespace ChallengeSnow.Models
         public List<Deal_Item> Deal_Items { get; set; } = new List<Deal_Item>();
 
 
-        public void AddItem(Item item)
+        //ITEM METHODS
+        #region  Items
+        public Result<bool> AddItem(Item item)
         {
-            var result = Items.Where(x => x.Id == item.Id);
-            if (result != null) return; // "Item Already exists";
+            var result = Items.Find(x => x.Id == item.Id);
+
+            if (result != null) return Result<bool>.Failure("Item exists"); // "Item Already exists";
 
             Items.Add(item);
+            return Result<bool>.Success(true);
         }
 
-        public void RemoveItem(Item item)
+        public Result<bool> RemoveItem(Guid id)
         {
-            var result = Items.Where(x => x.Id == item.Id);
-            if (result == null) return; // "Item doesnt exist!";
+            var result = Items.Find(x => x.Id == id);
 
-            Items.Remove(item);
+            if (result == null) return Result<bool>.Failure("Item doesn't exist"); // "Item doesnt exist!";
+
+            Items.Remove(result);
+            return Result<bool>.Success(true);
+        }
+
+        public Result<Item> GetItem(Guid id)
+        {
+            var result = Items.Find(x => x.Id == id);
+
+            return Result<Item>.Success(result);
+        }
+        public Result<IEnumerable<Item>> GetItems()
+        {
+            return Result<IEnumerable<Item>>.Success(Items.ToList());
         }
 
 
-        public void AddDeal(Deal_Item item)
+        public Result<bool> UpdateItem(Item item)
         {
-            var result = Deal_Items.Where(x => x.Id == item.Id);
-            if (result != null) return; // "Item Already exists";
+            var result = Items.FindIndex(x => x.Id == item.Id);
+
+            if (result == -1) return Result<bool>.Failure("Item not found"); // "Item Already exists";
+
+            Items[result] = item;
+            return Result<bool>.Success(true);
+        }
+
+        #endregion
+
+        // DEAL METHODS
+        #region deal_items
+        public Result<bool> AddDeal(Deal_Item item)
+        {
+            var result = Deal_Items.Find(x => x.Id == item.Id);
+
+            if (result != null) return Result<bool>.Failure("Deal already exists"); // "Item Already exists";
 
             Deal_Items.Add(item);
+            return Result<bool>.Success(true);
+        }
+        public Result<IEnumerable<Deal_Item>> GetDeal_Items()
+        {
+            return Result<IEnumerable<Deal_Item>>.Success(Deal_Items.ToList());
         }
 
-        public void AddOrder(Order order)
+        public Result<Deal_Item> GetDeal_Items(Guid id)
         {
-            var result = Orders.Where(x => x.Id == order.Id);
-            if (result != null) return; // "Item Already exists";
+            var result = Deal_Items.Find(x => x.Id == id);
+
+            if (result == null) return Result<Deal_Item>.Failure("Deal not found");
+
+            return Result<Deal_Item>.Success(result);
+        }
+
+        public Result<bool> UpdateDeal(Deal_Item item)
+        {
+            var result = Deal_Items.FindIndex(x => x.Id == item.Id);
+
+            if (result == -1) return Result<bool>.Failure("Deal doesn't exist"); // "Item Already exists";
+
+            Deal_Items[result] = item;
+            return Result<bool>.Success(true);
+        }
+
+        public Result<bool> RemoveDeal(Guid id)
+        {
+            var result = Deal_Items.Find(x => x.Id == id);
+
+            if (result == null) return Result<bool>.Failure("Deal doesn't exist"); // "Item Already exists";
+
+            Deal_Items.Remove(result);
+            return Result<bool>.Success(true);
+        }
+
+        #endregion
+
+        #region orders
+        public Result<bool> AddOrder(Order order)
+        {
+            var result = Orders.Find(x => x.Id == order.Id);
+
+            if (result != null) return Result<bool>.Failure("Order already exists"); // "Item Already exists";
 
             Orders.Add(order);
+            return Result<bool>.Success(true);
         }
 
+        public Result<bool> UpdateOrder(Order order)
+        {
+            var result = Orders.FindIndex(x => x.Id == order.Id);
+
+            if (result == -1) return Result<bool>.Failure("Order doesn't exist"); // "Item Already exists";
+
+            Orders[result] = order;
+            return Result<bool>.Success(true);
+        }
+
+        public Result<bool> RemoveOrder(Guid id)
+        {
+            var result = Orders.Find(x => x.Id == id);
+
+            if (result == null) return Result<bool>.Failure("Order doesn't exist"); // "Item Already exists";
+
+            Orders.Remove(result);
+            return Result<bool>.Success(true);
+        }
+
+        public Result<IEnumerable<Order>> GetOrders()
+        {
+            return Result<IEnumerable<Order>>.Success(Orders.ToList());
+        }
+
+        public Result<Order> GetOrders(Guid id)
+        {
+            var result = Orders.Find(x => x.Id == id);
+
+            if (result == null) return Result<Order>.Failure("Order not found");
+
+            return Result<Order>.Success(result);
+        }
+
+        #endregion
         public string PrintItems()
         {
             string print = "";
@@ -81,18 +188,6 @@ namespace ChallengeSnow.Models
             dealItems.ForEach(x => Deal_Items.Add(x));
         }
 
-        public IEnumerable<Order> GetOrders()
-        {
-            return Orders.ToList();
-        }
-        public IEnumerable<Item> GetItems()
-        {
-            return Items.ToList();
-        }
-        public IEnumerable<Deal_Item> GetDeal_Items()
-        {
-            return Deal_Items.ToList();
-        }
 
     }
 }
