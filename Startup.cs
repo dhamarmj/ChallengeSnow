@@ -1,4 +1,7 @@
 using ChallengeSnow.Models;
+using ChallengeSnow.Models.Core;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -25,7 +28,8 @@ namespace ChallengeSnow
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddRazorPages();
+            services.AddRazorPages().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ItemsValidator>());
+            //services.AddTransient<IValidator<Item>, ItemsValidator>();
             services.AddSingleton<Interfaces.IOrderManager, Order_Manager>();
 
         }

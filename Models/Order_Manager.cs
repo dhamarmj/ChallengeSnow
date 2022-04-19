@@ -17,9 +17,12 @@ namespace ChallengeSnow.Models
         #region  Items
         public Result<bool> AddItem(Item item)
         {
-            var result = Items.Find(x => x.Id == item.Id);
-
-            if (result != null) return Result<bool>.Failure("Item exists"); // "Item Already exists";
+            if (item.Id == null || item.Id == Guid.Empty) item.Id = new Guid();
+            else
+            {
+                var result = Items.Find(x => x.Id == item.Id);
+                if (result != null) return Result<bool>.Failure("Item exists"); // "Item Already exists";
+            }
 
             Items.Add(item);
             return Result<bool>.Success(true);
@@ -31,6 +34,7 @@ namespace ChallengeSnow.Models
 
             if (result == null) return Result<bool>.Failure("Item doesn't exist"); // "Item doesnt exist!";
 
+            Orders.RemoveAll(x => x.Item_Number.Id == id);
             Items.Remove(result);
             return Result<bool>.Success(true);
         }
@@ -39,13 +43,14 @@ namespace ChallengeSnow.Models
         {
             var result = Items.Find(x => x.Id == id);
 
+            if (result == null) return Result<Item>.Failure("Item not found");
+
             return Result<Item>.Success(result);
         }
         public Result<IEnumerable<Item>> GetItems()
         {
             return Result<IEnumerable<Item>>.Success(Items.ToList());
         }
-
 
         public Result<bool> UpdateItem(Item item)
         {
@@ -63,6 +68,8 @@ namespace ChallengeSnow.Models
         #region deal_items
         public Result<bool> AddDeal(Deal_Item item)
         {
+            if (item.Start_Date > item.End_Date) return Result<bool>.Failure("Start and End Dates don't match");
+
             var result = Deal_Items.Find(x => x.Id == item.Id);
 
             if (result != null) return Result<bool>.Failure("Deal already exists"); // "Item Already exists";
@@ -74,7 +81,6 @@ namespace ChallengeSnow.Models
         {
             return Result<IEnumerable<Deal_Item>>.Success(Deal_Items.ToList());
         }
-
         public Result<Deal_Item> GetDeal_Items(Guid id)
         {
             var result = Deal_Items.Find(x => x.Id == id);
@@ -83,9 +89,10 @@ namespace ChallengeSnow.Models
 
             return Result<Deal_Item>.Success(result);
         }
-
         public Result<bool> UpdateDeal(Deal_Item item)
         {
+            if (item.Start_Date > item.End_Date) return Result<bool>.Failure("Start and End Dates don't match");
+
             var result = Deal_Items.FindIndex(x => x.Id == item.Id);
 
             if (result == -1) return Result<bool>.Failure("Deal doesn't exist"); // "Item Already exists";
@@ -93,13 +100,13 @@ namespace ChallengeSnow.Models
             Deal_Items[result] = item;
             return Result<bool>.Success(true);
         }
-
         public Result<bool> RemoveDeal(Guid id)
         {
             var result = Deal_Items.Find(x => x.Id == id);
 
             if (result == null) return Result<bool>.Failure("Deal doesn't exist"); // "Item Already exists";
 
+            Orders.RemoveAll(x => x.Item_Number.Id == id);
             Deal_Items.Remove(result);
             return Result<bool>.Success(true);
         }
@@ -109,11 +116,37 @@ namespace ChallengeSnow.Models
         #region orders
         public Result<bool> AddOrder(Order order)
         {
-            var result = Orders.Find(x => x.Id == order.Id);
+            if (order.Id == null || order.Id == Guid.Empty) order.Id = new Guid();
+            else
+            {
+                var result = Orders.Find(x => x.Id == order.Id);
 
-            if (result != null) return Result<bool>.Failure("Order already exists"); // "Item Already exists";
+                if (result != null) return Result<bool>.Failure("Order already exists");
+            }
+
+            var dealItem = GetDeal_Items(order.Item_Number.Id).Value;
+            var item = GetItem(order.Item_Number.Id).Value;
+
+            if (dealItem == null && item == null) return Result<bool>.Failure("Item doesn't exist");
+            else if (dealItem != null)
+            {
+                order.Item_Number = dealItem;
+                dealItem.Available_Quantity -= order.Quantity;
+
+                UpdateDeal(dealItem);
+            }
+            else
+            {
+                order.Item_Number = item;
+                item.Available_Quantity -= order.Quantity;
+
+                UpdateItem(item);
+            }
+
+            order.Date_Created = DateTime.Now;
 
             Orders.Add(order);
+
             return Result<bool>.Success(true);
         }
 

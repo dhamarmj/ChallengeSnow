@@ -18,5 +18,15 @@ namespace ChallengeSnow.Models
         [DisplayFormat(DataFormatString = "{0:MMMM dd yyyy}")]
         [Display(Name = "End Date")]
         public DateTime End_Date { get; set; }
+
+        private decimal _reduced_price;
+        public decimal Reduced_price
+        {
+            get
+            {
+                _reduced_price = Price * (1 - Discount / 100);
+                return _reduced_price;
+            }
+        }
     }
 }

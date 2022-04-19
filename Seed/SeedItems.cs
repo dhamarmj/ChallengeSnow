@@ -28,8 +28,6 @@ namespace ChallengeSnow.Seed
 
                 };
 
-                items.Add(o);
-
                 var d = new Deal_Item
                 {
                     Id = Guid.NewGuid(),
@@ -40,6 +38,7 @@ namespace ChallengeSnow.Seed
                     End_Date = DateTime.Now.AddDays(i),
                 };
 
+                items.Add(o);
                 deals.Add(d);
             }
 
@@ -52,7 +51,7 @@ namespace ChallengeSnow.Seed
                     Id = Guid.NewGuid(),
                     Date_Created = DateTime.Now.AddDays(i * -1),
                     Quantity = rnd.Next(1, 10),
-                    Item_Number = (rnd.Next(2) == 1) ? items[rnd.Next(0, 5)] : deals[rnd.Next(0, 5)]
+                    Item_Number = items[rnd.Next(0, 5)]
                 };
 
                 orders.Add(o);
