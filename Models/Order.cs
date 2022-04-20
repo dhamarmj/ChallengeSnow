@@ -15,6 +15,7 @@ namespace ChallengeSnow.Models
         public DateTime Date_Created { get; set; }
 
         public Item Item_Number { get; set; }
+        public Guid Item_NumberId { get; set; }
 
         public int Quantity { get; set; }
     }

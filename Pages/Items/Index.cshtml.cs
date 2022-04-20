@@ -20,5 +20,24 @@ namespace ChallengeSnow.Pages.Items
             Items = items.Value;
             Deal_Items = deals.Value;
         }
+
+        public async Task<IActionResult> OnPostDelete(Guid id)
+        {
+            var result = await OrderManager.RemoveItem(id);
+            return HandleResult(result);
+
+            //var book = await _db.Book.FindAsync(id);
+            //if (book == null)
+            //{
+            //    return NotFound();
+            //}
+            //}
+
+            //_db.Book.Remove(book);
+            //await _db.SaveChangesAsync();
+
+            // return RedirectToPage("Index");
+
+        }
     }
 }

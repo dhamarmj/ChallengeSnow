@@ -168,23 +168,25 @@ namespace ChallengeSnow.Models
                 if (result != null) return Result<bool>.Failure("Order already exists");
             }
 
-            var dealItem = await GetDeal_Items(order.Item_Number.Id);
-            var item = await GetItem(order.Item_Number.Id);
+            //var dealItem = await GetDeal_Items(order.Item_Number.Id);
+            var item = await _dataContext.Items.FindAsync(order.Item_Number.Id);
 
-            if (!dealItem.IsSuccess && !item.IsSuccess) return Result<bool>.Failure("Item doesn't exist");
-            else if (dealItem.IsSuccess)
-            {
-                order.Item_Number = dealItem.Value;
-                dealItem.Value.Available_Quantity -= order.Quantity;
+            if (item == null) return Result<bool>.Failure("Item doesn't exist");
+            // else if (dealItem.IsSuccess)
+            // {
+            //     order.Item_Number = dealItem.Value;
+            //     dealItem.Value.Available_Quantity -= order.Quantity;
 
-                await UpdateDeal(dealItem.Value);
-            }
+            //     await UpdateDeal(dealItem.Value);
+            // }
             else
             {
-                order.Item_Number = item.Value;
-                item.Value.Available_Quantity -= order.Quantity;
+                var newItem = item;
+                newItem.Available_Quantity -= order.Quantity;
+                order.Item_Number = newItem;
+                order.Item_NumberId = newItem.Id;
 
-                await UpdateItem(item.Value);
+                _mapper.Map(item, newItem);
             }
 
             order.Date_Created = DateTime.Now;

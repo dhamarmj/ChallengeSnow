@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc;
+using ChallengeSnow.Models.Core;
 
 namespace ChallengeSnow.Pages
 {
@@ -13,6 +15,17 @@ namespace ChallengeSnow.Pages
         private IOrderManager _orderManager;
 
         protected IOrderManager OrderManager => _orderManager ??= HttpContext.RequestServices.GetService<IOrderManager>();
+
+        protected ActionResult HandleResult<T>(Result<T> result)
+        {
+            if (result == null) return NotFound();
+            if (result.IsSuccess && result.Value != null)
+                return RedirectToPage("Index");
+            if (result.IsSuccess && result.Value == null)
+                return NotFound();
+
+            return BadRequest(result.Error);
+        }
 
     }
 }

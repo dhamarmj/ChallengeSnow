@@ -17,6 +17,8 @@ namespace ChallengeSnow.Models
         [DisplayFormat(DataFormatString = "{0:$##.##}")]
         public decimal Price { get; set; }
 
+        public ICollection<Order> Orders { get; set; }
+
     }
 }
 
