@@ -16,36 +16,36 @@ namespace ChallengeSnow.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var result = OrderManager.GetItems();
+            var result = await OrderManager.GetItems();
             return HandleResult(result);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            return HandleResult(OrderManager.GetItem(id));
+            return HandleResult(await OrderManager.GetItem(id));
         }
 
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            return HandleResult(OrderManager.RemoveItem(id));
+            return HandleResult(await OrderManager.RemoveItem(id));
         }
 
 
         [HttpPost]
-        public IActionResult Create(Item item)
+        public async Task<ActionResult> Create(Item item)
         {
-            return HandleResult(OrderManager.AddItem(item));
+            return HandleResult(await OrderManager.AddItem(item));
         }
 
         [HttpPut]
-        public IActionResult Update(Item item)
+        public async Task<IActionResult> Update(Item item)
         {
-            return HandleResult(OrderManager.UpdateItem(item));
+            return HandleResult(await OrderManager.UpdateItem(item));
         }
     }
 }

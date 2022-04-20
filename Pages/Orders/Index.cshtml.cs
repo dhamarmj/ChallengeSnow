@@ -14,10 +14,10 @@ namespace ChallengeSnow.Pages.Orders
         public IEnumerable<Order> Orders { get; set; }
 
 
-        public void OnGet()
+        public async void OnGet()
         {
-            Console.WriteLine(OrderManager.PrintOrders());
-            Orders = OrderManager.GetOrders().Value;
+            var orders = await OrderManager.GetOrders();
+            Orders = orders.Value;
         }
     }
 }

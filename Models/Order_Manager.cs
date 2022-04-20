@@ -2,63 +2,91 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using ChallengeSnow.Models.Core;
+using ChallengeSnow.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChallengeSnow.Models
 {
     public class Order_Manager : Interfaces.IOrderManager
     {
-        public List<Order> Orders { get; set; } = new List<Order>();
-        public List<Item> Items { get; set; } = new List<Item>();
-        public List<Deal_Item> Deal_Items { get; set; } = new List<Deal_Item>();
-
+        private readonly DataContext _dataContext;
+        private readonly MapperConfiguration mapperConfig = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Item, Item>();
+            cfg.CreateMap<Deal_Item, Deal_Item>();
+            cfg.CreateMap<Order, Order>();
+        });
+        Mapper _mapper;
+        public Order_Manager(DataContext dc)
+        {
+            _dataContext = dc;
+            _mapper = new Mapper(mapperConfig);
+        }
 
         //ITEM METHODS
         #region  Items
-        public Result<bool> AddItem(Item item)
+        public async Task<Result<bool>> AddItem(Item item)
         {
-            if (item.Id == null || item.Id == Guid.Empty) item.Id = new Guid();
+            if (item.Id == Guid.Empty) item.Id = new Guid();
             else
             {
-                var result = Items.Find(x => x.Id == item.Id);
+                var result = await _dataContext.Items.FindAsync(item.Id);
                 if (result != null) return Result<bool>.Failure("Item exists"); // "Item Already exists";
             }
 
-            Items.Add(item);
+            _dataContext.Items.Add(item);
+            var save = await _dataContext.SaveChangesAsync() > 0;
+
+            if (!save) return Result<bool>.Failure("Error saving item");
+
             return Result<bool>.Success(true);
         }
 
-        public Result<bool> RemoveItem(Guid id)
+        public async Task<Result<bool>> RemoveItem(Guid id)
         {
-            var result = Items.Find(x => x.Id == id);
+            var result = await _dataContext.Items.FindAsync(id);
 
             if (result == null) return Result<bool>.Failure("Item doesn't exist"); // "Item doesnt exist!";
 
-            Orders.RemoveAll(x => x.Item_Number.Id == id);
-            Items.Remove(result);
+            //CALL THE ORDER REMOVE!
+
+            _dataContext.Remove(result);
+
+            var save = await _dataContext.SaveChangesAsync() > 0;
+
+            if (!save) return Result<bool>.Failure("Failed to delete");
+
             return Result<bool>.Success(true);
         }
 
-        public Result<Item> GetItem(Guid id)
+        public async Task<Result<Item>> GetItem(Guid id)
         {
-            var result = Items.Find(x => x.Id == id);
+            var activity = await _dataContext.Items.FindAsync(id);
 
-            if (result == null) return Result<Item>.Failure("Item not found");
+            if (activity == null) return Result<Item>.Failure("Item not found");
 
-            return Result<Item>.Success(result);
+            return Result<Item>.Success(activity);
         }
-        public Result<IEnumerable<Item>> GetItems()
+        public async Task<Result<IEnumerable<Item>>> GetItems()
         {
-            return Result<IEnumerable<Item>>.Success(Items.ToList());
+            return Result<IEnumerable<Item>>.Success(await _dataContext.Items.ToListAsync());
         }
 
-        public Result<bool> UpdateItem(Item item)
+
+        public async Task<Result<bool>> UpdateItem(Item item)
         {
-            var result = Items.FindIndex(x => x.Id == item.Id);
+            var result = await _dataContext.Items.FindAsync(item.Id);
 
-            if (result == -1) return Result<bool>.Failure("Item not found"); // "Item Already exists";
+            if (result == null) return Result<bool>.Failure("Item not found"); // "Item Already exists";
 
-            Items[result] = item;
+            _mapper.Map(item, result);
+
+            var save = await _dataContext.SaveChangesAsync() > 0;
+
+            if (!save) return Result<bool>.Failure("Failure to update");
+
             return Result<bool>.Success(true);
         }
 
@@ -66,129 +94,164 @@ namespace ChallengeSnow.Models
 
         // DEAL METHODS
         #region deal_items
-        public Result<bool> AddDeal(Deal_Item item)
+        public async Task<Result<bool>> AddDeal(Deal_Item item)
         {
             if (item.Start_Date > item.End_Date) return Result<bool>.Failure("Start and End Dates don't match");
 
-            var result = Deal_Items.Find(x => x.Id == item.Id);
+            var result = _dataContext.Deal_Items.FindAsync(item.Id);
 
             if (result != null) return Result<bool>.Failure("Deal already exists"); // "Item Already exists";
 
-            Deal_Items.Add(item);
+            _dataContext.Deal_Items.Add(item);
+            var save = await _dataContext.SaveChangesAsync() > 0;
+
+            if (!save) return Result<bool>.Failure("Error saving Deal item");
+
             return Result<bool>.Success(true);
         }
-        public Result<IEnumerable<Deal_Item>> GetDeal_Items()
+
+        public async Task<Result<Deal_Item>> GetDeal_Items(Guid id)
         {
-            return Result<IEnumerable<Deal_Item>>.Success(Deal_Items.ToList());
-        }
-        public Result<Deal_Item> GetDeal_Items(Guid id)
-        {
-            var result = Deal_Items.Find(x => x.Id == id);
+            var result = await _dataContext.Deal_Items.FindAsync(id);
 
             if (result == null) return Result<Deal_Item>.Failure("Deal not found");
 
             return Result<Deal_Item>.Success(result);
         }
-        public Result<bool> UpdateDeal(Deal_Item item)
+
+        public async Task<Result<IEnumerable<Deal_Item>>> GetDeal_Items()
+        {
+            return Result<IEnumerable<Deal_Item>>.Success(await _dataContext.Deal_Items.ToListAsync());
+        }
+        public async Task<Result<bool>> UpdateDeal(Deal_Item item)
         {
             if (item.Start_Date > item.End_Date) return Result<bool>.Failure("Start and End Dates don't match");
 
-            var result = Deal_Items.FindIndex(x => x.Id == item.Id);
-
-            if (result == -1) return Result<bool>.Failure("Deal doesn't exist"); // "Item Already exists";
-
-            Deal_Items[result] = item;
-            return Result<bool>.Success(true);
-        }
-        public Result<bool> RemoveDeal(Guid id)
-        {
-            var result = Deal_Items.Find(x => x.Id == id);
+            var result = await _dataContext.Deal_Items.FindAsync(item.Id);
 
             if (result == null) return Result<bool>.Failure("Deal doesn't exist"); // "Item Already exists";
 
-            Orders.RemoveAll(x => x.Item_Number.Id == id);
-            Deal_Items.Remove(result);
+            _mapper.Map(item, result);
+
+            var save = await _dataContext.SaveChangesAsync() > 0;
+
+            if (!save) return Result<bool>.Failure("Failure to update");
+
+            return Result<bool>.Success(true);
+        }
+        public async Task<Result<bool>> RemoveDeal(Guid id)
+        {
+            var result = _dataContext.Deal_Items.FindAsync(id);
+
+            if (result == null) return Result<bool>.Failure("Deal doesn't exist"); // "Item Already exists";
+
+            //REMOVE ORDERS
+            _dataContext.Remove(result);
+
+            var save = await _dataContext.SaveChangesAsync() > 0;
+
+            if (!save) return Result<bool>.Failure("Failed to delete");
+
             return Result<bool>.Success(true);
         }
 
         #endregion
 
         #region orders
-        public Result<bool> AddOrder(Order order)
+        public async Task<Result<bool>> AddOrder(Order order)
         {
-            if (order.Id == null || order.Id == Guid.Empty) order.Id = new Guid();
+            if (order.Id == Guid.Empty) order.Id = new Guid();
             else
             {
-                var result = Orders.Find(x => x.Id == order.Id);
+                var result = await _dataContext.Orders.FindAsync(order.Id);
 
                 if (result != null) return Result<bool>.Failure("Order already exists");
             }
 
-            var dealItem = GetDeal_Items(order.Item_Number.Id).Value;
-            var item = GetItem(order.Item_Number.Id).Value;
+            var dealItem = await GetDeal_Items(order.Item_Number.Id);
+            var item = await GetItem(order.Item_Number.Id);
 
-            if (dealItem == null && item == null) return Result<bool>.Failure("Item doesn't exist");
-            else if (dealItem != null)
+            if (!dealItem.IsSuccess && !item.IsSuccess) return Result<bool>.Failure("Item doesn't exist");
+            else if (dealItem.IsSuccess)
             {
-                order.Item_Number = dealItem;
-                dealItem.Available_Quantity -= order.Quantity;
+                order.Item_Number = dealItem.Value;
+                dealItem.Value.Available_Quantity -= order.Quantity;
 
-                UpdateDeal(dealItem);
+                await UpdateDeal(dealItem.Value);
             }
             else
             {
-                order.Item_Number = item;
-                item.Available_Quantity -= order.Quantity;
+                order.Item_Number = item.Value;
+                item.Value.Available_Quantity -= order.Quantity;
 
-                UpdateItem(item);
+                await UpdateItem(item.Value);
             }
 
             order.Date_Created = DateTime.Now;
 
-            Orders.Add(order);
+            _dataContext.Orders.Add(order);
+
+            var save = await _dataContext.SaveChangesAsync() > 0;
+
+            if (!save) return Result<bool>.Failure("Error saving Deal item");
 
             return Result<bool>.Success(true);
         }
 
-        public Result<bool> UpdateOrder(Order order)
+        public async Task<Result<bool>> UpdateOrder(Order order)
         {
-            var result = Orders.FindIndex(x => x.Id == order.Id);
+            var result = await _dataContext.Orders.FindAsync(order.Id);
 
-            if (result == -1) return Result<bool>.Failure("Order doesn't exist"); // "Item Already exists";
+            if (result == null) return Result<bool>.Failure("Order doesn't exist");
 
-            Orders[result] = order;
+            _mapper.Map(order, result);
+
+            var save = await _dataContext.SaveChangesAsync() > 0;
+
+            if (!save) return Result<bool>.Failure("Failure to update");
+
             return Result<bool>.Success(true);
         }
 
-        public Result<bool> RemoveOrder(Guid id)
+        public async Task<Result<bool>> RemoveOrder(Guid id) // remember to update the quantity of objects!
         {
-            var result = Orders.Find(x => x.Id == id);
+            var result = _dataContext.Orders.FindAsync(id);
 
             if (result == null) return Result<bool>.Failure("Order doesn't exist"); // "Item Already exists";
 
-            Orders.Remove(result);
+            _dataContext.Remove(result);
+
+            var save = await _dataContext.SaveChangesAsync() > 0;
+
+            if (!save) return Result<bool>.Failure("Failed to delete");
+
             return Result<bool>.Success(true);
         }
 
-        public Result<IEnumerable<Order>> GetOrders()
+        private void RemoveOrders(Guid itemId)
         {
-            return Result<IEnumerable<Order>>.Success(Orders.ToList());
-        }
 
-        public Result<Order> GetOrders(Guid id)
+        }
+        public async Task<Result<Order>> GetOrders(Guid id)
         {
-            var result = Orders.Find(x => x.Id == id);
+            var result = await _dataContext.Orders.FindAsync(id);
 
             if (result == null) return Result<Order>.Failure("Order not found");
 
             return Result<Order>.Success(result);
         }
 
+        public async Task<Result<IEnumerable<Order>>> GetOrders()
+        {
+            return Result<IEnumerable<Order>>.Success(await _dataContext.Orders.ToListAsync());
+        }
+
+
         #endregion
         public string PrintItems()
         {
             string print = "";
-            Items.ForEach(x =>
+            _dataContext.Items.ToList().ForEach(x =>
             {
                 print += String.Format("{0}-{1}-{2} \n", x.Id, x.Available_Quantity, x.Price);
                 Console.WriteLine(String.Format("{0}-{1}-{2}", x.Id, x.Available_Quantity, x.Price));
@@ -200,27 +263,13 @@ namespace ChallengeSnow.Models
         public string PrintOrders()
         {
             string print = "";
-            Orders.ForEach(x =>
-            {
-                print += String.Format("{0}-{1}-{2}-{3} \n", x.Id, x.Date_Created.ToString("MMMM dd yyyy"), x.Item_Number, x.Quantity);
-                Console.WriteLine(String.Format("{0}-{1}-{2}-{3} \n", x.Id, x.Date_Created.ToString("MMMM dd yyyy"), x.Item_Number, x.Quantity));
-            });
+            _dataContext.Orders.ToList().ForEach(x =>
+             {
+                 print += String.Format("{0}-{1}-{2}-{3} \n", x.Id, x.Date_Created.ToString("MMMM dd yyyy"), x.Item_Number, x.Quantity);
+                 Console.WriteLine(String.Format("{0}-{1}-{2}-{3} \n", x.Id, x.Date_Created.ToString("MMMM dd yyyy"), x.Item_Number, x.Quantity));
+             });
 
             return print;
         }
-
-        public bool ContainsOrders()
-        {
-            return Orders.Any();
-        }
-
-        public void InitialValues(List<Order> ordersList, List<Item> itemList, List<Deal_Item> dealItems)
-        {
-            ordersList.ForEach(x => Orders.Add(x));
-            itemList.ForEach(x => Items.Add(x));
-            dealItems.ForEach(x => Deal_Items.Add(x));
-        }
-
-
     }
 }

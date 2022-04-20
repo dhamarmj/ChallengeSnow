@@ -1,13 +1,18 @@
+using AutoMapper;
+using ChallengeSnow.Interfaces;
 using ChallengeSnow.Models;
 using ChallengeSnow.Models.Core;
+using ChallengeSnow.Persistence;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,14 +29,21 @@ namespace ChallengeSnow
 
         public IConfiguration Configuration { get; }
 
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddRazorPages().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ItemsValidator>());
-            //services.AddTransient<IValidator<Item>, ItemsValidator>();
-            services.AddSingleton<Interfaces.IOrderManager, Order_Manager>();
 
+            services.AddRazorPages()
+                    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ItemsValidator>());
+
+            services.AddDbContext<DataContext>(opt =>
+            {
+                opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            services.AddScoped<IOrderManager>(srp => new Order_Manager(srp.GetRequiredService<DataContext>()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

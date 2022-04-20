@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ChallengeSnow.Seed
+namespace ChallengeSnow.Persistence
 {
     public class SeedItems
     {
-        public static void SeedData(IOrderManager orderManager)
+        public static async void SeedData(DataContext _context)
         {
-            if (orderManager.ContainsOrders()) return;
+            if (_context.Orders.Any()) return;
 
             Random rnd = new Random();
             List<Item> items = new List<Item>();
@@ -39,9 +39,12 @@ namespace ChallengeSnow.Seed
                 };
 
                 items.Add(o);
-                deals.Add(d);
+                items.Add(d);
             }
 
+            items.ForEach(x => Console.WriteLine("Items: " + x.Id));
+            await _context.Items.AddRangeAsync(items);
+            //await _context.Deal_Items.AddRangeAsync(activities);
 
             List<Order> orders = new List<Order>();
             for (int i = 1; i <= 10; i++)
@@ -56,8 +59,9 @@ namespace ChallengeSnow.Seed
 
                 orders.Add(o);
             }
-
-            orderManager.InitialValues(orders, items, deals);
+            orders.ForEach(x => Console.WriteLine("Orders: " + x.Id));
+            await _context.Orders.AddRangeAsync(orders);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using ChallengeSnow.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,36 +13,36 @@ namespace ChallengeSnow.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var result = OrderManager.GetDeal_Items();
+            var result = await OrderManager.GetDeal_Items();
             return HandleResult(result);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            return HandleResult(OrderManager.GetDeal_Items(id));
+            return HandleResult(await OrderManager.GetDeal_Items(id));
         }
 
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            return HandleResult(OrderManager.RemoveDeal(id));
+            return HandleResult(await OrderManager.RemoveDeal(id));
         }
 
 
         [HttpPost]
-        public IActionResult Create(Deal_Item item)
+        public async Task<ActionResult> Create(Deal_Item item)
         {
-            return HandleResult(OrderManager.AddDeal(item));
+            return HandleResult(await OrderManager.AddDeal(item));
         }
 
         [HttpPut]
-        public IActionResult Update(Deal_Item item)
+        public async Task<IActionResult> Update(Deal_Item item)
         {
-            return HandleResult(OrderManager.UpdateDeal(item));
+            return HandleResult(await OrderManager.UpdateDeal(item));
         }
     }
 }

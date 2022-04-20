@@ -13,10 +13,12 @@ namespace ChallengeSnow.Pages.Items
         public IEnumerable<Item> Items { get; set; }
         public IEnumerable<Deal_Item> Deal_Items { get; set; }
 
-        public void OnGet()
+        public async void OnGet()
         {
-            Items = OrderManager.GetItems().Value;
-            Deal_Items = OrderManager.GetDeal_Items().Value;
+            var items = await OrderManager.GetItems();
+            var deals = await OrderManager.GetDeal_Items();
+            Items = items.Value;
+            Deal_Items = deals.Value;
         }
     }
 }

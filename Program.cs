@@ -1,5 +1,5 @@
 using ChallengeSnow.Interfaces;
-using ChallengeSnow.Seed;
+using ChallengeSnow.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +22,8 @@ namespace ChallengeSnow
             var services = scope.ServiceProvider;
             try
             {
-                SeedItems.SeedData(services.GetRequiredService<IOrderManager>());
+                var context = services.GetRequiredService<DataContext>();
+                SeedItems.SeedData(context);
             }
             catch (System.Exception ex)
             {
