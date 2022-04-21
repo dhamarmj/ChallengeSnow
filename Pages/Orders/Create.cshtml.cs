@@ -18,9 +18,16 @@ namespace ChallengeSnow.Pages.Orders
         public List<SelectListItem> Options { get; set; }
 
 
-        public void OnGet()
+        public async Task<IActionResult> OnGet(Guid Id)
         {
             StartOptions();
+
+            Order = new Order();
+            if (Id == Guid.Empty) return Page();
+
+            var result = await OrderManager.GetOrders(Id);
+            if (result.IsSuccess) Order = result.Value;
+            return HandleResult(result);
         }
 
         public async void StartOptions()

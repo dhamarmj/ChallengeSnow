@@ -4,29 +4,34 @@
     ViewData["Title"] = "Home page";
 }
 
-<br/>
-<div class="card" style="width:75rem">
-    <div class="card-body">
-        <h3 class="card-title">Title</h3>
-        <p class="card-text">ChildContent</p>
-    </div>
-</div>
-<br/>
-<div class="card" style="width:75rem; height: 15rem">
-    <div class="card-body">
-        <h3 class="card-title">Order Print</h3>
-        <textarea style="width: 100%; height: 75%" asp-for="PrintOrders"></textarea>
-    </div>
-</div>
-<br/>
-<div class="card" style="width:75rem; height:15rem">
-    <div class="card-body">
-        <h3 class="card-title">Item List</h3>
-        <textarea style="width: 100%; height:75%" asp-for="PrintItems"></textarea>
-    </div>
-</div>
+<div class="container">
+        <div class="card" style="width:100%">
+            <div class="card-body">
+                <h3 class="card-title text-info">General Profit</h3>
+                <p class="card-text">Total Profit: $@(Model.Profit)</p>
 
+                <h3 class="card-title text-info">General Profit Loss</h3>
+                <p class="card-text">Total Profit: $@(Model.ProfitLoss)</p>
+            </div>
+        </div>
+
+    <br />
+    <div class="card" style="width:100%; height: 15rem">
+        <div class="card-body">
+            <h3 class="card-title text-info">Order Print</h3>
+            <textarea style="width: 100%; height: 75%" asp-for="PrintOrders"></textarea>
+        </div>
+    </div>
+
+    <br />
+    <div class="card" style="width:100%; height:15rem">
+        <div class="card-body">
+            <h3 class="card-title text-info">Item List</h3>
+            <textarea style="width: 100%; height:75%" asp-for="PrintItems"></textarea>
+        </div>
+    </div>
+</div>
 @* <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p> 
-</div> *@
+        <h1 class="display-4">Welcome</h1>
+        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    </div> *@

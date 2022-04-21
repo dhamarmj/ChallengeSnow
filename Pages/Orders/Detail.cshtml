@@ -1,0 +1,78 @@
+﻿@page
+@model ChallengeSnow.Pages.Orders.DetailModel
+@{
+}
+<br />
+<h3 class="text-info">Order No. @(Model.Order.Id) </h3>
+<div class="border container" style="padding:30px;">
+    <form method="post">
+        <div class="text-danger" asp-validation-summary="ModelOnly">
+
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Order.Quantity"></label>
+            </div>
+            <div class="col-5">
+                @Html.DisplayFor(x => x.Order.Quantity)
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Order.Item_NumberId"></label>
+            </div>
+            <div class="col-5">
+                @Html.DisplayFor(x => x.Order.Item_Number.Description)
+                
+                
+            </div>
+        
+    </div>
+    <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Order.Item_Number.Price"></label>
+            </div>
+            <div class="col-5">
+                
+                @if (Model.Reduced_price > 0)
+                {
+                    @Html.DisplayFor(x => x.Reduced_price)
+                }
+                else
+                {
+                    @Html.DisplayFor(x => x.Order.Item_Number.Price)
+                }
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Order.Date_Created"></label>
+            </div>
+            <div class="col-5">
+                @Html.DisplayFor(x => x.Order.Date_Created)
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Profit"></label>
+            </div>
+            <div class="col-5">
+                $@Html.DisplayFor(x => x.Profit)
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-4 offset-4">
+                <a asp-page="Index" class="btn btn-success form-control">Back to List</a>
+            </div>
+        </div>
+    </form>
+    @if (ViewData["Message"] != null)
+    {
+        <script type="text/javascript">
+                    window.onload = function () {
+                        alert("@ViewData["Message"]");
+                    };
+        </script>
+    }
+</div>
+
