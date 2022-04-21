@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChallengeSnow.Models
 {
-    public class Deal_Item : Item
+    public class Deal_Item : ItemBase
     {
         [DisplayFormat(DataFormatString = "{0:##.##}%")]
         public decimal Discount { get; set; }
@@ -20,6 +20,8 @@ namespace ChallengeSnow.Models
         public DateTime End_Date { get; set; }
 
         private decimal _reduced_price;
+
+        [Display(Name = "Discount Price")]
         public decimal Reduced_price
         {
             get

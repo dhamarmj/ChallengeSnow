@@ -1,9 +1,9 @@
 ﻿@page
-@model ChallengeSnow.Pages.BuggyPageModel
+@model ChallengeSnow.Pages.Orders.CreateModel
 @{
 }
 <br />
-<h2 class="text-info">Create New Book</h2>
+<h2 class="text-info">Create New Order</h2>
 <br />
 
 <div class="border container" style="padding:30px;">
@@ -13,22 +13,24 @@
         </div>
         <div class="form-group row">
             <div class="col-4">
-                <label asp-for="Item.Available_Quantity"></label>
+                <label asp-for="Order.Quantity"></label>
             </div>
             <div class="col-6">
-                <input asp-for="Item.Available_Quantity" class="form-control" />
+                <input asp-for="Order.Quantity" class="form-control" />
             </div>
-            <span asp-validation-for="Item.Available_Quantity" class="text-danger"></span>
+            <span asp-validation-for="Order.Quantity" class="text-danger"></span>
         </div>
+
         <div class="form-group row">
             <div class="col-4">
-                <label asp-for="Item.Price"></label>
+                <label asp-for="Order.Item_NumberId"></label>
             </div>
             <div class="col-6">
-                <input asp-for="Item.Price" class="form-control" />
+                <select asp-items="Model.Options" asp-for="Order.Item_NumberId" class="form-control"></select>
             </div>
-            <span asp-validation-for="Item.Price" class="text-danger"></span>
+            <span asp-validation-for="Order.Item_NumberId" class="text-danger"></span>
         </div>
+
         <div class="form-group row">
             <div class="col-3 offset-4">
                 <input type="submit" value="Create" class="btn btn-primary form-control" />
@@ -38,6 +40,14 @@
             </div>
         </div>
     </form>
+    @if (ViewData["Message"] != null)
+            {
+                <script type="text/javascript">
+                    window.onload = function () {
+                        alert("@ViewData["Message"]");
+                    };
+                </script>
+            }
 </div>
 
 

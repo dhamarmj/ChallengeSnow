@@ -12,6 +12,15 @@
         <div class="text-danger" asp-validation-summary="ModelOnly">
 
         </div>
+         <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Item.Description"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Item.Description" class="form-control" />
+            </div>
+            <span asp-validation-for="Item.Description" class="text-danger"></span>
+        </div>
         <div class="form-group row">
             <div class="col-4">
                 <label asp-for="Item.Available_Quantity"></label>
@@ -39,6 +48,14 @@
             </div>
         </div>
     </form>
+    @if (ViewData["Message"] != null)
+            {
+                <script type="text/javascript">
+                    window.onload = function () {
+                        alert("@ViewData["Message"]");
+                    };
+                </script>
+            }
 </div>
 
 

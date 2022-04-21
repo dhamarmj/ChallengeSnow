@@ -17,6 +17,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+
+
 
 namespace ChallengeSnow
 {
@@ -33,16 +36,20 @@ namespace ChallengeSnow
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+            .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddRazorPages()
+            //Fluent Validator
                     .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ItemsValidator>());
 
+            //Data Context
             services.AddDbContext<DataContext>(opt =>
             {
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            //Injecting Order Manager
             services.AddScoped<IOrderManager>(srp => new Order_Manager(srp.GetRequiredService<DataContext>()));
         }
 

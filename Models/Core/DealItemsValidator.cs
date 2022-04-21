@@ -2,6 +2,7 @@ using FluentValidation;
 
 namespace ChallengeSnow.Models.Core
 {
+    // Fluent Validator for the Models with bussiness rules
     public class DealItemsValidator : AbstractValidator<Deal_Item>
     {
         public DealItemsValidator()

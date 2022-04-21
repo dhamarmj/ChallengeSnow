@@ -13,8 +13,9 @@ namespace ChallengeSnow.Models
         [DisplayFormat(DataFormatString = "{0:MMMM dd yyyy}")]
         [Display(Name = "Created")]
         public DateTime Date_Created { get; set; }
-
-        public Item Item_Number { get; set; }
+        public ItemBase Item_Number { get; set; }
+        
+        [Display(Name = "Item")]
         public Guid Item_NumberId { get; set; }
 
         public int Quantity { get; set; }

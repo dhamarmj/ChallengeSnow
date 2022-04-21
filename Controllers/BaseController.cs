@@ -7,6 +7,8 @@ namespace ChallengeSnow.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    // Base Controller -> for all the Controllers to inherit
+    // base references and general returns
     public class BaseController : Controller
     {
         private IOrderManager _orderManager;

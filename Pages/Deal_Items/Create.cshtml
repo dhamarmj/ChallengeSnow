@@ -1,0 +1,94 @@
+﻿@page
+@model ChallengeSnow.Pages.Deal_Items.CreateModel
+@{
+}
+
+<br />
+<h2 class="text-info">Create New Deal</h2>
+<br />
+
+<div class="border container" style="padding:30px;">
+    <form method="post">
+        <div class="text-danger" asp-validation-summary="ModelOnly">
+
+        </div>
+          <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Deal.Description"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Deal.Description" class="form-control" />
+            </div>
+            <span asp-validation-for="Deal.Description" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Deal.Available_Quantity"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Deal.Available_Quantity" class="form-control" />
+            </div>
+            <span asp-validation-for="Deal.Available_Quantity" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Deal.Price"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Deal.Price" class="form-control" />
+            </div>
+            <span asp-validation-for="Deal.Price" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Deal.Discount"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Deal.Discount" class="form-control" />
+            </div>
+            <span asp-validation-for="Deal.Discount" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Deal.Start_Date"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Deal.Start_Date" class="form-control" />
+            </div>
+            <span asp-validation-for="Deal.Start_Date" class="text-danger"></span>
+
+        </div>
+        <div class="form-group row">
+            <div class="col-4">
+                <label asp-for="Deal.End_Date"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Deal.End_Date" class="form-control" />
+            </div>
+            <span asp-validation-for="Deal.End_Date" class="text-danger"></span>
+        </div>
+        <div class="form-group row">
+            <div class="col-3 offset-4">
+                <input type="submit" value="Create" class="btn btn-primary form-control" />
+            </div>
+            <div class="col-3">
+                <a asp-page="Index" class="btn btn-success form-control">Back to List</a>
+            </div>
+        </div>
+    </form>
+    @if (ViewData["Message"] != null)
+            {
+                <script type="text/javascript">
+                    window.onload = function () {
+                        alert("@ViewData["Message"]");
+                    };
+                </script>
+            }
+</div>
+
+
+
+@*to make the validation not enter the client side*@
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

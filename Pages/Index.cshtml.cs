@@ -8,18 +8,17 @@ using System.Threading.Tasks;
 
 namespace ChallengeSnow.Pages
 {
-    public class IndexModel : PageModel
+    public class IndexModel : BaseRazorPage
     {
-        private readonly ILogger<IndexModel> _logger;
+        public string PrintOrders { get; set; }
+        public string PrintItems { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public async void OnGet()
         {
-            _logger = logger;
-        }
-
-        public void OnGet()
-        {
-
+            var orders = await OrderManager.PrintOrders();
+            PrintOrders = orders;
+            var items = await OrderManager.PrintItems();
+            PrintItems = items;
         }
     }
 }

@@ -16,14 +16,14 @@ namespace ChallengeSnow
     {
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build(); //.Run();
+            var host = CreateHostBuilder(args).Build(); 
 
             using var scope = host.Services.CreateScope();
             var services = scope.ServiceProvider;
             try
             {
-                var context = services.GetRequiredService<DataContext>();
-                SeedItems.SeedData(context);
+                var context = services.GetRequiredService<DataContext>(); 
+                SeedItems.SeedData(context); //Seeding initial data 
             }
             catch (System.Exception ex)
             {

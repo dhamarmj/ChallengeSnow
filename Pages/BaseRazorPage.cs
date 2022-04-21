@@ -8,12 +8,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using ChallengeSnow.Models.Core;
 
+
 namespace ChallengeSnow.Pages
 {
+    // Base Razor Page -> for all the Pages to inherit
+    // base references and general returns
     public class BaseRazorPage : PageModel
     {
         private IOrderManager _orderManager;
-
         protected IOrderManager OrderManager => _orderManager ??= HttpContext.RequestServices.GetService<IOrderManager>();
 
         protected ActionResult HandleResult<T>(Result<T> result)
@@ -24,8 +26,11 @@ namespace ChallengeSnow.Pages
             if (result.IsSuccess && result.Value == null)
                 return NotFound();
 
-            return BadRequest(result.Error);
+
+            ViewData["Message"] = result.Error;
+            return Page();
         }
+
 
     }
 }

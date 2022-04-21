@@ -1,5 +1,6 @@
 namespace ChallengeSnow.Models.Core
 {
+    // Implementing a Result class to return Controller and Page Actions 
     public class Result<T>
     {
         public bool IsSuccess { get; set; }

@@ -1,5 +1,5 @@
 ﻿@page
-@model ChallengeSnow.Pages.Items.IndexModel
+@model ChallengeSnow.Pages.Deal_Items.IndexModel
 @{
 }
 
@@ -7,32 +7,38 @@
 
 <div class="container row p-0 m-0">
     <div class="col-9">
-        <h2 class="text-info"> Items List</h2>
+        <h2 class="text-info"> Deals List</h2>
     </div>
     <div class="col-3">
-        <a asp-page="Create" class="btn btn-info form-control text-white">Create New Item</a>
+        <a asp-page="Create" class="btn btn-info form-control text-white">Create New Deal</a>
     </div>
 
     <div class="col-12 border p-3 mt-3">
         <form method="post">
-            @if (Model.Items.Count() > 0)
+            @if (Model.Deal_Items.Count() > 0)
             {
                 <table class="table table-striped border">
                     <tr class="table-secondary">
                         <th>
-                            <label asp-for="Items.FirstOrDefault().Description"></label>
+                            <label asp-for="Deal_Items.FirstOrDefault().Description"></label>
                         </th>
                         <th>
-                            <label asp-for="Items.FirstOrDefault().Available_Quantity"></label>
+                            <label asp-for="Deal_Items.FirstOrDefault().Available_Quantity"></label>
                         </th>
                         <th>
-                            <label asp-for="Items.FirstOrDefault().Price"></label>
+                            <label asp-for="Deal_Items.FirstOrDefault().Reduced_price"></label>
+                        </th>
+                        <th>
+                            <label asp-for="Deal_Items.FirstOrDefault().Start_Date"></label>
+                        </th>
+                        <th>
+                            <label asp-for="Deal_Items.FirstOrDefault().End_Date"></label>
                         </th>
                         <th>
 
                         </th>
                     </tr>
-                    @foreach (var item in Model.Items)
+                    @foreach (var item in Model.Deal_Items)
                     {
                         <tr>
                             <td>
@@ -42,10 +48,16 @@
                                 @Html.DisplayFor(m => item.Available_Quantity)
                             </td>
                             <td>
-                                @Html.DisplayFor(m => item.Price)
+                                @Html.DisplayFor(m => item.Reduced_price)
                             </td>
                             <td>
-                                <button asp-page-handler="Delete" asp-route-id="@item.Id" onclick="return confirm('Are you sure you want to delete?')" class="btn btn-danger btn-sm text-white">Delete</button>
+                                @Html.DisplayFor(m => item.Start_Date)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.End_Date)
+                            </td>
+                            <td>
+                                <button asp-page-handler="Delete" asp-route-Id="@item.Id" onclick="return confirm('Are you sure you want to delete?')" class="btn btn-danger btn-sm text-white">Delete</button>
                             </td>
                         </tr>
                     }

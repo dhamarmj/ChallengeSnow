@@ -8,50 +8,71 @@
     <div class="col-9">
         <h2 class="text-info"> Order List</h2>
     </div>
+    <div class="col-3">
+        <a asp-page="Create" class="btn btn-info form-control text-white">Create New Order</a>
+    </div>
 
     <div class="col-12 border p-3 mt-3">
-        @if (Model.Orders.Count() > 0)
-        {
-            <table class="table table-striped border">
-                <tr class="table-secondary">
-                    <th>
-                        <label asp-for="Orders.FirstOrDefault().Id"></label>
-                    </th>
-                    <th>
-                        <label asp-for="Orders.FirstOrDefault().Date_Created"></label>
-                    </th>
-                    <th>
-                        <label asp-for="Orders.FirstOrDefault().Item_Number"></label>
-                    </th>
-                    <th>
-                        <label asp-for="Orders.FirstOrDefault().Quantity"></label>
-                    </th>
-                </tr>
-                @foreach (var item in Model.Orders)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(m => item.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(m => item.Date_Created)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(m => item.Item_NumberId)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(m => item.Quantity)
-                        </td>
+        <form method="post">
+            @if (Model.Orders.Count() > 0)
+            {
+                <table class="table table-striped border">
+                    <tr class="table-secondary">
+                        <th>
+                            <label asp-for="Orders.FirstOrDefault().Id"></label>
+                        </th>
+                        <th>
+                            <label asp-for="Orders.FirstOrDefault().Date_Created"></label>
+                        </th>
+                        <th>
+                            <label asp-for="Orders.FirstOrDefault().Item_Number"></label>
+                        </th>
+                        <th>
+                            <label asp-for="Orders.FirstOrDefault().Quantity"></label>
+                        </th>
+                        <th>
+
+                        </th>
+
                     </tr>
+                    @foreach (var item in Model.Orders)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(m => item.Id)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.Date_Created)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.Item_Number.Description)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(m => item.Quantity)
+                            </td>
+                            <td>
+                                <button asp-page-handler="Delete" asp-route-id="@item.Id" onclick="return confirm('Are you sure you want to delete?')" class="btn btn-danger btn-sm text-white">Delete</button>
+                            </td>
+                        </tr>
 
-                }
+                    }
 
-            </table>
-        }
-        else
-        {
-            <p>No Orders available </p>
-        }
+                </table>
+            }
+            else
+            {
+                <p>No Orders available </p>
+            }
+        </form>
+        @if (ViewData["Message"] != null)
+            {
+                <script type="text/javascript">
+                    window.onload = function () {
+                        alert("@ViewData["Message"]");
+                    };
+                </script>
+            }
+        
     </div>
 
 
